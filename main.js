@@ -34,14 +34,32 @@ function loadMap(position) {
     poly.setMap(map)
     map.addListener('click', addLatLng)
 
+    setInterval(() => {
+        myLatLng = new google.maps.LatLng({lat: position.coords.latitude, lng: position.coords.longitude}) 
+        
+        var path = poly.getPath()
+        path.push(myLatLng)
+        console.log(myLatLng);
+        
+        var marker = new google.maps.Marker({
+            position: myLatLng,  
+            title: '#' + path.getLength(),
+            animation: google.maps.Animation.BOUNCE,
+            map: map
+        })
+    },5000)
+
 }
 
 function addLatLng(e) {
     var path = poly.getPath()
     path.push(e.latLng)
+    console.log(e.latLng);
+    
     var marker = new google.maps.Marker({
         position: e.latLng,  
         title: '#' + path.getLength(),
+        animation: google.maps.Animation.BOUNCE,
         map: map
     })
 }
