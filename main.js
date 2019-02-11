@@ -1,6 +1,6 @@
 function initMap() {
 	if (Modernizr.geolocation) {
-		navigator.geolocation.getCurrentPosition(loadMap)
+		navigator.geolocation.getCurrentPosition(drawPath)
 	}
 }
 
@@ -63,7 +63,7 @@ function loadMap(position) {
 	})
 	poly.setMap(map)
 	map.addListener('click', addLatLng)
-
+	
     var adaRef = firebase.database().ref('routes')
 	console.log(adaRef);
 	
@@ -98,6 +98,80 @@ function addLatLng(e) {
 	})
 }
 
+
+function drawPath(position) {
+	
+	latitude = position.coords.latitude
+	longitude = position.coords.longitude
+
+	console.log(latitude + " : " + longitude)
+
+	var dasPos = { lat: latitude, lng: longitude }
+	console.log(dasPos);
+
+	map = new google.maps.Map(document.getElementById('map'), {
+		center: dasPos,
+		zoom: 17,
+		gestureHandling: 'greedy',
+		styles: mapStyles
+	})
+
+	var stigCoordinates = [
+	  {lat: 56.882, lng: 14.817},
+	  {lat: 56.883, lng: 14.817},
+	  {lat: 56.883, lng: 14.818},
+	  {lat: 56.884, lng: 14.819}
+	];
+	var stigPath = new google.maps.Polyline({
+	  path: stigCoordinates,
+	  strokeColor: '#FF0000',
+	  strokeOpacity: 1.0,
+	  strokeWeight: 2
+	});
+
+	stigPath.setMap(map);
+  }
+
+function setPath(position) {
+	latitude = position.coords.latitude
+	longitude = position.coords.longitude
+
+	console.log(latitude + " : " + longitude)
+
+	var dasPos = { lat: latitude, lng: longitude }
+	console.log(dasPos);
+
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: dasPos,
+		zoom: 17,
+		gestureHandling: 'greedy',
+		styles: mapStyles
+    });
+    poly = new google.maps.Polyline({
+        strokeColor: '#000000',
+        strokeOpacity: 1.0,
+        strokeWeight: 3
+    });
+    poly.setMap(map);
+    // Add a listener for the click event
+    map.addListener('click', addLatLng);
+}
+
+    // Handles click events on a map, and adds a new point to the Polyline.
+function addLatLng(event) {
+    var path = poly.getPath();
+
+    // Because path is an MVCArray, we can simply append a new coordinate
+    // and it will automatically appear.
+    path.push(event.latLng);
+
+    // Add a new marker at the new plotted point on the polyline.
+    var marker = new google.maps.Marker({
+        position: event.latLng,
+        title: '#' + path.getLength(),
+        map: map
+    });
+}
 
 
 var mapStyles = [
