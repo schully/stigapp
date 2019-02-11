@@ -120,7 +120,8 @@ function drawPath(position) {
 	  {lat: 56.882, lng: 14.817},
 	  {lat: 56.883, lng: 14.817},
 	  {lat: 56.883, lng: 14.818},
-	  {lat: 56.884, lng: 14.819}
+	  {lat: 56.884, lng: 14.819},
+	  {lat: 56.884, lng: 14.818}
 	];
 	var stigPath = new google.maps.Polyline({
 	  path: stigCoordinates,
@@ -130,6 +131,19 @@ function drawPath(position) {
 	});
 
 	stigPath.setMap(map);
+
+	infoWindow = new google.maps.InfoWindow;
+
+	var pos = {
+		lat: stigCoordinates[stigCoordinates.length/2].lat,
+		lng: stigCoordinates[stigCoordinates.length/2].lng
+	  };
+	  
+	  infoWindow.setPosition(pos);
+	  infoWindow.setContent('name');
+	  infoWindow.open(map);
+
+
   }
 
 function setPath(position) {
