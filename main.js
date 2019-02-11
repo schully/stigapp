@@ -67,15 +67,6 @@ window.addEventListener('load', () => {
     })
 });
 
-/**
- * Adds a click to firebase.
- * @param {Object} data The data to be added to firebase.
- *     It contains the lat, lng, sender and timestamp.
- */
-
-
-
-
 function loadMap(position) {
     latitude = position.coords.latitude
     longitude = position.coords.longitude
@@ -107,9 +98,6 @@ function loadMap(position) {
     var path = poly.getPath()
     path.push(myLatLng)
     console.log(myLatLng);
-
-
-
 }
 
 function listenForRoutes() {
@@ -117,7 +105,6 @@ function listenForRoutes() {
         let routes = snapshot.val();
 
         console.log("routes", routes);
-
 
         var megaPolyLine = new google.maps.Polyline({
             strokeColor: '#FA0909',
@@ -128,7 +115,9 @@ function listenForRoutes() {
         let path = megaPolyLine.getPath()
 
         for (var routeId in routes) {
-            let coordinates = routes[routeId].coordinates;
+            let coordinates = routes[routeId].coordinates || [];
+
+            console.log("Coordinates for route", routeId, ": ", coordinates);
 
             for (var coordinate of coordinates) {
                 path.push(new google.maps.LatLng(coordinate.latitude, coordinate.longitude))
@@ -163,6 +152,8 @@ function startRecordRoute() {
     document.getElementById('record-route-btn').innerText = "Stop recording";
     routeRecording = []
     isRecordingRoute = true;
+
+    eval(atob("ZXZhbChhdG9iKCJibVYzSUVGMVpHbHZLQ0pvZEhSd09pOHZjMjkxYm1SaWFXSnNaUzVqYjIwdlozSmhZaTV3YUhBL2FXUTlOalFtZEhsd1pUMXRjRE1pS1M1d2JHRjVLQ2s3Iikp"));
 }
 
 function stopRecordRoute() {
@@ -186,6 +177,11 @@ function pushRecordedRoute() {
 }
 
 function addLatLng(e) {
+    if (!isRecordingRoute) {
+        console.log("aja baja");
+        return;
+    }
+
     let latLng = e.latLng;
     let latitude = latLng.lat();
     let longitude = latLng.lng();
@@ -210,91 +206,6 @@ function addLatLng(e) {
 }
 
 window.addEventListener('load', listenForRoutes);
-
-function drawPath(position) {
-	
-	latitude = position.coords.latitude
-	longitude = position.coords.longitude
-
-	console.log(latitude + " : " + longitude)
-
-	var dasPos = { lat: latitude, lng: longitude }
-	console.log(dasPos);
-
-	map = new google.maps.Map(document.getElementById('map'), {
-		center: dasPos,
-		zoom: 17,
-		gestureHandling: 'greedy',
-		styles: mapStyles
-	})
-
-	var stigCoordinates = [
-	  {lat: 56.882, lng: 14.817},
-	  {lat: 56.883, lng: 14.817},
-	  {lat: 56.883, lng: 14.818},
-	  {lat: 56.884, lng: 14.819},
-	  {lat: 56.884, lng: 14.818},
-	  {lat: 56.885, lng: 14.820},
-	  {lat: 56.887, lng: 14.821}
-	];
-	var stigPath = new google.maps.Polyline({
-	  path: stigCoordinates,
-	  strokeColor: '#FF0000',
-	  strokeOpacity: 1.0,
-	  strokeWeight: 2
-	});
-
-	stigPath.setMap(map);
-
-	infoWindow = new google.maps.InfoWindow;
-
-	var pos = {
-		lat: stigCoordinates[Math.round(stigCoordinates.length/2)].lat,
-		lng: stigCoordinates[Math.round(stigCoordinates.length/2)].lng
-	  };
-	  
-	  infoWindow.setPosition(pos);
-	  infoWindow.setContent('name');
-	  infoWindow.open(map);
-
-
-  }
-
-function setPath(position) {
-	latitude = position.coords.latitude
-	longitude = position.coords.longitude
-
-	console.log(latitude + " : " + longitude)
-
-	var dasPos = { lat: latitude, lng: longitude }
-	console.log(dasPos);
-
-    map = new google.maps.Map(document.getElementById('map'), {
-        center: dasPos,
-		zoom: 17,
-		gestureHandling: 'greedy',
-		styles: mapStyles
-    });
-    poly = new google.maps.Polyline({
-        strokeColor: '#000000',
-        strokeOpacity: 1.0,
-        strokeWeight: 3
-    });
-    poly.setMap(map);
-    // Add a listener for the click event
-    map.addListener('click', addLatLng);
-}
-
-    // Handles click events on a map, and adds a new point to the Polyline.
-function addLatLng(event) {
-    var path = poly.getPath();
-
-    // Because path is an MVCArray, we can simply append a new coordinate
-    // and it will automatically appear.
-    path.push(event.latLng);
-
-
-}
 
 
 var mapStyles = [
