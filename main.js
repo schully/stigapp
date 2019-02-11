@@ -121,8 +121,17 @@ function listenForRoutes() {
 
             for (var coordinate of coordinates) {
                 path.push(new google.maps.LatLng(coordinate.latitude, coordinate.longitude))
-            }
-        }
+			}
+			
+			infoWindow = new google.maps.InfoWindow;
+			var pos = {
+				lat: coordinates[Math.round(coordinates.length/2)].latitude,
+				lng: coordinates[Math.round(coordinates.length/2)].longitude
+	  		};
+	  		infoWindow.setPosition(pos);
+	  		infoWindow.setContent(routes[routeId].name);
+	  		infoWindow.open(map);
+		}
     })
 }
 
