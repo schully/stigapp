@@ -6,7 +6,6 @@ function initMap() {
 
 
 var map
-var poly
 
 var provider = new firebase.auth.GoogleAuthProvider()
 
@@ -83,38 +82,39 @@ function loadMap(position) {
         styles: mapStyles
     })
 
-
-    poly = new google.maps.Polyline({
-        strokeColor: '#FA0909',
-        strokeOpacity: 0.95,
-        strokeWeight: 1
-    })
-    poly.setMap(map)
     map.addListener('click', addLatLng)
 
     //setInterval(() => {
     myLatLng = new google.maps.LatLng({ lat: position.coords.latitude, lng: position.coords.longitude })
 
-    var path = poly.getPath()
-    path.push(myLatLng)
-    console.log(myLatLng);
+    listenForRoutes();
 }
 
 function listenForRoutes() {
+    let polylineCache = []
+
     firebase.database().ref('routes').on('value', snapshot => {
         let routes = snapshot.val();
 
+        for (var polyline of polylineCache) {
+            polyline.setMap(null);
+        }
+        polylineCache = [];
+
         console.log("routes", routes);
 
-        var megaPolyLine = new google.maps.Polyline({
-            strokeColor: '#FA0909',
-            strokeOpacity: 0.95,
-            strokeWeight: 1
-        });
-        megaPolyLine.setMap(map)
-        let path = megaPolyLine.getPath()
-
         for (var routeId in routes) {
+
+            var polyline = new google.maps.Polyline({
+                strokeColor: '#FA0909',
+                strokeOpacity: 0.95,
+                strokeWeight: 1
+            });
+            polyline.setMap(map)
+            let path = polyline.getPath()
+
+            polylineCache.push(polyline);
+
             let coordinates = routes[routeId].coordinates || [];
 
             console.log("Coordinates for route", routeId, ": ", coordinates);
@@ -130,6 +130,11 @@ function listenForRoutes() {
  * Array of coordinates of the currently recorded route.
  */
 var routeRecording = [];
+
+/**
+ * Polyline currently being recorded.
+ */
+var recordedPolyline;
 var isRecordingRoute = false;
 function toggleRecordRoute() {
     if (isRecordingRoute) {
@@ -144,7 +149,19 @@ function startRecordRoute() {
     routeRecording = []
     isRecordingRoute = true;
 
-    eval(atob("ZXZhbChhdG9iKCJibVYzSUVGMVpHbHZLQ0pvZEhSd09pOHZjMjkxYm1SaWFXSnNaUzVqYjIwdlozSmhZaTV3YUhBL2FXUTlOalFtZEhsd1pUMXRjRE1pS1M1d2JHRjVLQ2s3Iikp"));
+    recordedPolyline = new google.maps.Polyline({
+        strokeColor: '#d81b60',
+        strokeWeight: 133.7
+    });
+    recordedPolyline.setMap(map);
+
+    console.log("lala says byebye?")
+    document.body.addEventListener('mousemove', () => {
+        console.log("lala says byebye")
+        let audio = new Audio("./ow.wav");
+        audio.play();
+        //eval(atob("ZXZhbChhdG9iKCJibVYzSUVGMVpHbHZLQ0pvZEhSd09pOHZjMjkxYm1SaWFXSnNaUzVqYjIwdlozSmhZaTV3YUhBL2FXUTlOalFtZEhsd1pUMXRjRE1pS1M1d2JHRjVLQ2s3Iikp"));
+    })
 }
 
 function stopRecordRoute() {
@@ -177,16 +194,16 @@ function addLatLng(e) {
     let latitude = latLng.lat();
     let longitude = latLng.lng();
 
-    var path = poly.getPath()
-    path.push(latLng)
     console.log(latLng);
 
-    if (isRecordingRoute) {
-        routeRecording.push({
-            latitude,
-            longitude
-        })
-    }
+    routeRecording.push({
+        latitude,
+        longitude
+    })
+    recordedPolyline.getPath().push({
+        lat: () => latitude,
+        lng: () => longitude
+    });
 
     /*var marker = new google.maps.Marker({
         position: e.latLng,
@@ -195,8 +212,6 @@ function addLatLng(e) {
         map: map
     })*/
 }
-
-window.addEventListener('load', listenForRoutes);
 
 
 var mapStyles = [
