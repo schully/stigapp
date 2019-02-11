@@ -1,13 +1,7 @@
 function initMap() {
-<<<<<<< HEAD
     if (Modernizr.geolocation) {
         navigator.geolocation.getCurrentPosition(loadMap)
     }
-=======
-	if (Modernizr.geolocation) {
-		navigator.geolocation.getCurrentPosition(drawPath)
-	}
->>>>>>> cf7df2c9c222672d22e4ff06f1884970131f457a
 }
 
 
@@ -83,7 +77,6 @@ window.addEventListener('load', () => {
 
 
 function loadMap(position) {
-<<<<<<< HEAD
     latitude = position.coords.latitude
     longitude = position.coords.longitude
 
@@ -107,8 +100,6 @@ function loadMap(position) {
     })
     poly.setMap(map)
     map.addListener('click', addLatLng)
-
-    console.log(adaRef);
 
     //setInterval(() => {
     myLatLng = new google.maps.LatLng({ lat: position.coords.latitude, lng: position.coords.longitude })
@@ -164,50 +155,6 @@ function toggleRecordRoute() {
         startRecordRoute();
     }
 }
-=======
-	latitude = position.coords.latitude
-	longitude = position.coords.longitude
-
-	console.log(latitude + " : " + longitude)
-
-	var dasPos = { lat: latitude, lng: longitude }
-	console.log(dasPos);
-
-	map = new google.maps.Map(document.getElementById('map'), {
-		center: dasPos,
-		zoom: 17,
-		gestureHandling: 'greedy',
-		styles: mapStyles
-	})
-
-
-	poly = new google.maps.Polyline({
-		strokeColor: '#FA0909',
-		strokeOpacity: 0.95,
-		strokeWeight: 1
-	})
-	poly.setMap(map)
-	map.addListener('click', addLatLng)
-	
-    var adaRef = firebase.database().ref('routes')
-	console.log(adaRef);
-	
-	//setInterval(() => {
-		myLatLng = new google.maps.LatLng({ lat: position.coords.latitude, lng: position.coords.longitude })
-
-		adaRef.push({latitude: position.coords.latitude, longitude: position.coords.longitude})
-		var path = poly.getPath()
-		path.push(myLatLng)
-		console.log(myLatLng);
-
-		var marker = new google.maps.Marker({
-			position: myLatLng,
-			title: '#' + path.getLength(),
-			animation: google.maps.Animation.BOUNCE,
-			map: map
-		})
-	//}, 5000)
->>>>>>> cf7df2c9c222672d22e4ff06f1884970131f457a
 
 function startRecordRoute() {
     document.getElementById('record-route-btn').innerText = "Stop recording";
