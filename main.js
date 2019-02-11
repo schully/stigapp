@@ -1,6 +1,6 @@
 function initMap() {
     if (Modernizr.geolocation) {
-        navigator.geolocation.getCurrentPosition(drawPath)
+        navigator.geolocation.getCurrentPosition(loadMap)
     }
 }
 
@@ -108,13 +108,7 @@ function loadMap(position) {
     path.push(myLatLng)
     console.log(myLatLng);
 
-    var marker = new google.maps.Marker({
-        position: myLatLng,
-        title: '#' + path.getLength(),
-        animation: google.maps.Animation.BOUNCE,
-        map: map
-    })
-    //}, 5000)
+
 
 }
 
@@ -290,12 +284,7 @@ function addLatLng(event) {
     // and it will automatically appear.
     path.push(event.latLng);
 
-    // Add a new marker at the new plotted point on the polyline.
-    var marker = new google.maps.Marker({
-        position: event.latLng,
-        title: '#' + path.getLength(),
-        map: map
-    });
+
 }
 
 
