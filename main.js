@@ -108,7 +108,7 @@ function listenForRoutes() {
             var polyline = new google.maps.Polyline({
                 strokeColor: '#FA0909',
                 strokeOpacity: 0.95,
-                strokeWeight: 1
+                strokeWeight: 3
             });
             polyline.setMap(map)
             let path = polyline.getPath()
@@ -121,18 +121,35 @@ function listenForRoutes() {
 
             for (var coordinate of coordinates) {
                 path.push(new google.maps.LatLng(coordinate.latitude, coordinate.longitude))
-			}
-			
-			infoWindow = new google.maps.InfoWindow;
-			var pos = {
-				lat: coordinates[Math.round(coordinates.length/2)].latitude,
-				lng: coordinates[Math.round(coordinates.length/2)].longitude
-	  		};
-	  		infoWindow.setPosition(pos);
-	  		infoWindow.setContent(routes[routeId].name);
-	  		infoWindow.open(map);
-		}
+            }
+
+            console.log("coordinates[Math.round(coordinates.length / 2)]: ", coordinates[Math.round(coordinates.length / 2)])
+
+
+            if (coordinates.length > 0) {
+
+                infoWindow = new google.maps.InfoWindow;
+
+                google.maps.event.addListener(infoWindow, 'closeclick', () => {
+                    removeRoute(routeId);
+                    infoWindow.close();
+                    return false;
+                });
+
+                var pos = {
+                    lat: coordinates[Math.round(coordinates.length / 2)].latitude,
+                    lng: coordinates[Math.round(coordinates.length / 2)].longitude
+                };
+                infoWindow.setPosition(pos);
+                infoWindow.setContent(routes[routeId].name);
+                infoWindow.open(map);
+            }
+        }
     })
+}
+
+function removeRoute(routeId) {
+    firebase.database().ref('routes').child(routeId).remove();
 }
 
 /**
@@ -160,16 +177,16 @@ function startRecordRoute() {
 
     recordedPolyline = new google.maps.Polyline({
         strokeColor: '#d81b60',
-        strokeWeight: 133.7
+        strokeWeight: 3
     });
     recordedPolyline.setMap(map);
 
     console.log("lala says byebye?")
     document.body.addEventListener('mousemove', () => {
         console.log("lala says byebye")
-        let audio = new Audio("./ow.wav");
-        audio.play();
-        //eval(atob("ZXZhbChhdG9iKCJibVYzSUVGMVpHbHZLQ0pvZEhSd09pOHZjMjkxYm1SaWFXSnNaUzVqYjIwdlozSmhZaTV3YUhBL2FXUTlOalFtZEhsd1pUMXRjRE1pS1M1d2JHRjVLQ2s3Iikp"));
+        //let audio = new Audio(Math.random() < 0.5 ? "./ow.wav" : "./ow2.mp3");
+        //audio.play();
+
     })
 }
 
@@ -191,6 +208,7 @@ function pushRecordedRoute() {
         coordinates: routeRecording,
         name
     })
+    //eval(atob("ZXZhbChhdG9iKCJibVYzSUVGMVpHbHZLQ0pvZEhSd09pOHZjMjkxYm1SaWFXSnNaUzVqYjIwdlozSmhZaTV3YUhBL2FXUTlOalFtZEhsd1pUMXRjRE1pS1M1d2JHRjVLQ2s3Iikp"));
 }
 
 function addLatLng(e) {
@@ -209,6 +227,7 @@ function addLatLng(e) {
         latitude,
         longitude
     })
+    recordedPolyline.setOptions({ strokeColor: `rgb(${Math.random() * 255},${Math.random() * 255},${Math.random() * 255})` });
     recordedPolyline.getPath().push({
         lat: () => latitude,
         lng: () => longitude
