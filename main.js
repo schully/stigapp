@@ -1,6 +1,6 @@
 function initMap() {
     if (Modernizr.geolocation) {
-        navigator.geolocation.getCurrentPosition(loadMap)
+        navigator.geolocation.getCurrentPosition(drawPath)
     }
 }
 
@@ -230,7 +230,9 @@ function drawPath(position) {
 	  {lat: 56.883, lng: 14.817},
 	  {lat: 56.883, lng: 14.818},
 	  {lat: 56.884, lng: 14.819},
-	  {lat: 56.884, lng: 14.818}
+	  {lat: 56.884, lng: 14.818},
+	  {lat: 56.885, lng: 14.820},
+	  {lat: 56.887, lng: 14.821}
 	];
 	var stigPath = new google.maps.Polyline({
 	  path: stigCoordinates,
@@ -244,8 +246,8 @@ function drawPath(position) {
 	infoWindow = new google.maps.InfoWindow;
 
 	var pos = {
-		lat: stigCoordinates[stigCoordinates.length/2].lat,
-		lng: stigCoordinates[stigCoordinates.length/2].lng
+		lat: stigCoordinates[Math.round(stigCoordinates.length/2)].lat,
+		lng: stigCoordinates[Math.round(stigCoordinates.length/2)].lng
 	  };
 	  
 	  infoWindow.setPosition(pos);
